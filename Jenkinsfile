@@ -32,6 +32,8 @@ pipeline {
                     exit 1
                 fi
                 '''
+
+                sh 'npm test'
             }
         }
     }
