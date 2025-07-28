@@ -24,8 +24,7 @@ pipeline {
             steps{
                 echo 'Test asamasi'
 
-                sh
-                '''
+                sh '''
                 if [ -f build/index.html ]; then
                     echo "index.html exists"
                 else
