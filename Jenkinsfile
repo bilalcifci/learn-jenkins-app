@@ -66,6 +66,13 @@ pipeline {
                             npx playwright test --reporter=html
                         '''
                     }
+                    post{
+                        always{
+                            echo "====++++always++++===="
+                            junit 'jest-results/junit.xml'
+                            publishHTML([allowMissing: false, alwaysLinkToLastBuild: false, icon: '', keepAll: false, reportDir: 'playwright-report', reportFiles: 'index.html', reportName: 'Playwright Local Report', reportTitles: '', useWrapperFileDirectly: true])
+                        }
+                    }
                 }
             }
         }
@@ -89,18 +96,28 @@ pipeline {
                 '''
             }
         }
-    }
-    post{
-        always{
-            echo "====++++always++++===="
-            junit 'jest-results/junit.xml'
-            publishHTML([allowMissing: false, alwaysLinkToLastBuild: false, icon: '', keepAll: false, reportDir: 'playwright-report', reportFiles: 'index.html', reportName: 'Playwright HTML Report', reportTitles: '', useWrapperFileDirectly: true])
-        }
-        success{
-            echo "====++++only when successful++++===="
-        }
-        failure{
-            echo "====++++only when failed++++===="
+        stage('Prod E2E'){
+            agent {
+                docker {
+                    image 'mcr.microsoft.com/playwright:v1.39.0-jammy'
+                    reuseNode true
+                }
+            }
+            environment {
+                CI_ENVIRONMENT_URL = 'https://melodic-yeot-2a3606.netlify.app'
+            }
+            steps{
+                sh '''
+                    npx playwright test --reporter=html
+                '''
+            }
+            post{
+                always{
+                    echo "====++++always++++===="
+                    junit 'jest-results/junit.xml'
+                    publishHTML([allowMissing: false, alwaysLinkToLastBuild: false, icon: '', keepAll: false, reportDir: 'playwright-report', reportFiles: 'index.html', reportName: 'Playwright E2E', reportTitles: '', useWrapperFileDirectly: true])
+                }
+            }
         }
     }
 }
