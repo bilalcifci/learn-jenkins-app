@@ -69,6 +69,9 @@ pipeline {
             }
         }
         stage('Deploy') {
+            environment {
+                NETLIFY_CLI = 'node_modules/.bin/netlify'
+            }
             agent {
                 docker {
                     image 'node:18-alpine'
@@ -81,6 +84,7 @@ pipeline {
                     node_modules/.bin/netlify --version
                     echo "Deploying to production. Site ID: $NETLIFY_SITE_ID"
                     node_modules/.bin/netlify status
+                    $NETLIFY_CLI deploy --dir=build --prod
                 '''
             }
         }
