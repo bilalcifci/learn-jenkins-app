@@ -63,7 +63,7 @@ pipeline {
     post{
         always{
             echo "====++++always++++===="
-            junit 'test-results/junit.xml'
+            junit 'jest-results/junit.xml'
         }
         success{
             echo "====++++only when successful++++===="
